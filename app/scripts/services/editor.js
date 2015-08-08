@@ -21,20 +21,17 @@ SwaggerEditor.service('Editor', function Editor(Autocomplete, ASTManager,
   }
 
   function annotateSwaggerError(error, type) {
-    var row = 0;
-    var column = 0;
 
-    if (false && editor && error.path) {
-      if (error.path.length) {
-        // TODO: ASTManager
-        row = ASTManager.lineForPath(_.cloneDeep(error.path));
-      }
-      editor.getSession().setAnnotations([{
-        row: row,
-        column: column,
-        text: error.message,
-        type: type || 'error'
-      }]);
+    if (editor && error.path, error.path.length) {
+      ASTManager.positionRangeForPath(editor.getValue(), error.path)
+      .then(function assign(range) {
+        editor.getSession().setAnnotations([{
+          row: range.start.line + 1,
+          column: range.start.column + 1,
+          text: error.message,
+          type: type || 'error'
+        }]);
+      });
     }
   }
 
